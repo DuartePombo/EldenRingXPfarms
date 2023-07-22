@@ -95,7 +95,7 @@ class Bot():
             return False
         time.sleep(0.5)
         Win32Helpers.press("g")
-        time.sleep(0.5)
+        time.sleep(3)
         while not self.isMap(model):
             Win32Helpers.press("q")
             time.sleep(0.5)
