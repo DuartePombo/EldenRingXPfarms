@@ -15,7 +15,7 @@ class Bot():
         self.elden_ring_window = Win32Helpers.get_window(window_title)
 
 
-    def take_screenshot_in_memory(area_percentage=(0.88, 0.25), window_title='ELDEN RING™'):
+    def take_screenshot_in_memory(screenshot_size=(180, 250), window_title='ELDEN RING™'):
         # Find the window by title (window_title)
         window = gw.getWindowsWithTitle(window_title)[0]
 
@@ -23,21 +23,22 @@ class Bot():
             # Get the window's position and size
             left, top, right, bottom = window.left, window.top, window.right, window.bottom
 
-            # Determine the area coordinates within the window based on percentages
-            if area_percentage:
-                width = right - left
-                height = bottom - top
+            # Calculate the width and height of the specified area
+            width = right - left
+            height = bottom - top
 
-                x1 = int(area_percentage[0] * width)
-                y1 = int(0.02 * width)
-                x2 = int(width*(1-0.02))
-                y2 = int(area_percentage[1] * height)
-
-                left, top, right, bottom = x1, y1, x2, y2
+            # Calculate the coordinates of the top right area
+            area_percentage = (0.88, 0.25)
+            x1 = int(left + area_percentage[0] * width)
+            y1 = int(top + 0.02 * width)
+            x2 = int(left + width * (1 - 0.02))
+            y2 = int(top + area_percentage[1] * height)
 
             # Capture the screenshot for the specified area
-            screenshot = ImageGrab.grab(bbox=(left, top, right, bottom))
+            screenshot = ImageGrab.grab(bbox=(x1, y1, x2, y2))
 
+            # Resize the screenshot to the fixed size
+            screenshot = screenshot.resize(screenshot_size)
             # Resize the screenshot to a lower resolution
             screenshot_resized = tf.image.resize(screenshot,(256,256))
 
@@ -49,12 +50,12 @@ class Bot():
 
     def img_prob(reloaded_model):
         # Take a screenshot with 50% of the original resolution and store it in memory
-        resize = Bot.take_screenshot_in_memory(area_percentage=(0.88, 0.25), window_title='ELDEN RING™')
+        resize = Bot.take_screenshot_in_memory(screenshot_size=(180, 250), window_title='ELDEN RING™')
         y_hat_prob = reloaded_model.predict(np.expand_dims(resize/255,0),verbose=0)
         return y_hat_prob
 
-    def isMap(self,model):
-        inside_prob = Bot.img_prob(model)
+    def isMap(self,reloaded_model):
+        inside_prob = Bot.img_prob(reloaded_model)
         if inside_prob > 0.5:
             return True
         elif inside_prob <=0.5:
@@ -93,9 +94,11 @@ class Bot():
     def teleport_back(self,model):
         if not self.check_window():
             return False
+        while self.isMap(model):
+            Win32Helpers.press("q")
         time.sleep(0.5)
         Win32Helpers.press("g")
-        time.sleep(3)
+        time.sleep(0.5)
         while not self.isMap(model):
             Win32Helpers.press("q")
             time.sleep(0.5)
