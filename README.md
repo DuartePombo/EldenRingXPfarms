@@ -22,18 +22,3 @@ The problem with the original bot was that sometimes, due to the game freezing, 
 Therefore, besides improving the characters positioning to slay the goblins, I developed a CNN that takes a screenshot in memory of the top right corner of the elden ring window. And If it detects the compass, that means it is inside the map menu, and can continue it's teleport procedure. This is done during all the teleport process, so you can test it yourself and when the bot clicks to teleport, you can click q to go back and you will see the bot realizing he is not on the map menu and will insist to get back to the map menu and will successfuly perform the teleportation.
 
 Notice that the repository also has a lot of files and folders that are not needed to run the bot. If you are interested, you can check how the CNN model was constructed in the CNN.ipynb and you can also peek into the Data folder, where you have all the train and test data that was used to train the model.
-
-
-For this code to work, you need to have installed the following packages:
-
-numpy==1.23.5
-tensorflow==2.12.0
-PyGetWindow==0.0.9
-Pillow==9.4.0
-pywin32==303
-pywin32-ctypes==0.2.0
-
-you probably need additional packages if you want to run the CNN.ipynb, but just install as you go if you want to.
-
-
-
